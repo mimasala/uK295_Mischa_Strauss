@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -24,7 +25,7 @@ public class GenreController {
     }
 
     @GetMapping(path = "{genreID}")
-    public ResponseEntity<Genre> findByIDController(@PathVariable Long genreID){
+    public ResponseEntity<Optional<Genre>> findByIDController(@PathVariable Long genreID){
         return ResponseEntity.ok()
                 .body(genreService.getGenre(genreID));
     }

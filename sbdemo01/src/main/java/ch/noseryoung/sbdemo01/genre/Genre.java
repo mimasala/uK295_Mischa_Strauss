@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
+@Getter@Setter
 public class Genre {
     @Id
     @SequenceGenerator
@@ -32,37 +33,4 @@ public class Genre {
 
     }
 
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Double getPopularity() {
-        return popularity;
-    }
-
-    public void setPopularity(Double popularity) {
-        this.popularity = popularity;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

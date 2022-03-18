@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GenreService {
@@ -19,8 +20,8 @@ public class GenreService {
         return genreRepository.findAll();
     }
 
-    public Genre getGenre(Long genreId) {
-        return genreRepository.getById(genreId);
+    public Optional<Genre> getGenre(Long genreId) {
+        return genreRepository.findById(genreId);
     }
 
     public void addGenre(Genre genre) {
