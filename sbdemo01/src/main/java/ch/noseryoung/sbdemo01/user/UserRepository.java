@@ -1,4 +1,4 @@
-package ch.noseryoung.sbdemo01.genre;
+package ch.noseryoung.sbdemo01.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,8 +9,8 @@ import javax.transaction.Transactional;
 
 
 @Repository
-public interface GenreRepository extends JpaRepository<Genre, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying @Transactional
-    @Query("update Genre g set g.name = ?1, g.description = ?2, g.popularity = ?3 where g.id = ?4")
-    void updateGenre(String name, String description, Double popularity, Long id);
+    @Query("update User g set g.username = ?1, g.password = ?2 where g.id = ?3")
+    void updateUser(String name,  String password, Long id);
 }

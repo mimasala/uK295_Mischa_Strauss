@@ -45,7 +45,7 @@ public class GenreController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) Double popularity){
-        genreService.updateGenre(genreID,name,description,popularity);
+        genreService.updateGenre(name,description,popularity,genreID);
     }
 
 }

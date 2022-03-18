@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GenreService {
@@ -33,7 +32,7 @@ public class GenreService {
     }
 
     @Transactional
-    public void updateGenre(Long genreID, String name, String description, Double popularity) {
-        genreRepository.updateGenre(name, popularity, description, genreID);
+    public void updateGenre( String name, String description, Double popularity,Long genreID) {
+        genreRepository.updateGenre(name,description, popularity,  genreID);
     }
 }

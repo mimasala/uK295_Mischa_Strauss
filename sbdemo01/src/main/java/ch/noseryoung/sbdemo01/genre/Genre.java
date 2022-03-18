@@ -6,17 +6,16 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-
 public class Genre {
     @Id
-//    @SequenceGenerator
-//            (
-//            name="genre_sequence",
-//            sequenceName = "genre_sequence",
-//            allocationSize = 1
-//    )
+    @SequenceGenerator
+            (
+            name="genre_sequence",
+            sequenceName = "genre_sequence",
+            allocationSize = 1
+    )
     @GeneratedValue(
-            strategy = GenerationType.AUTO
+            strategy = GenerationType.IDENTITY
     )
     private Long id;
     private String name;
