@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping(path = "{UserID}")
-    public ResponseEntity<User> findByIDController(@PathVariable Long UserID){
+    public ResponseEntity<Optional<User>> findByIDController(@PathVariable Long UserID){
         return ResponseEntity.ok()
                 .body(UserService.getUser(UserID));
     }
@@ -47,5 +48,4 @@ public class UserController {
             @RequestParam(required = false) String password){
         UserService.updateUser(UserID,name,password);
     }
-
 }

@@ -6,11 +6,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 
 @Repository
+//@Transactional(readOnly = true)
 public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying @Transactional
-    @Query("update User g set g.username = ?1, g.password = ?2 where g.id = ?3")
+    @Query("update User g set g.username = ?1, g.password = ?2 where g.UserId = ?3")
     void updateUser(String name,  String password, Long id);
+
+    Optional<User> findByUsername(String username);
+
+    Optional<User> findByEmail(String email);
+
+
 }
