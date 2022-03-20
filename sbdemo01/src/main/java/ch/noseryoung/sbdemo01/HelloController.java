@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
     @GetMapping("/api/v1/")
     public String index(){
-        return "grelaksjdf";
+        return "this is my API";
     }
 }
