@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping(path = "api/v1/genre")
+@RequestMapping(path = "api/v1/genre/")
 public class GenreController {
 
     private final GenreService genreService;
@@ -49,4 +49,8 @@ public class GenreController {
         genreService.updateGenre(name,description,popularity,genreID);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    ResponseEntity<String> exception(IllegalStateException illegal){
+        return ResponseEntity.status(404).body(illegal.getMessage());
+    }
 }

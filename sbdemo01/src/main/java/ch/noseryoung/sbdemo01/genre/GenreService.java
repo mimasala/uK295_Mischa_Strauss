@@ -34,6 +34,6 @@ public class GenreService {
 
     @Transactional
     public void updateGenre( String name, String description, Double popularity,Long genreID) {
-        genreRepository.updateGenre(name,description, popularity,  genreID);
+        genreRepository.updateGenre(name,description, popularity, genreID);
     }
 }

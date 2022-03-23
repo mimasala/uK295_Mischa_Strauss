@@ -10,7 +10,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping(path = "api/v1/user")
+@RequestMapping(path = "api/v1/user/")
 public class UserController {
 
     private final UserService UserService;
@@ -21,7 +21,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> findAll(){
+    public ResponseEntity<List<User>> findAll(){
         return UserService.getUsers();
     }
 
@@ -31,21 +31,15 @@ public class UserController {
                 .body(UserService.getUser(UserID));
     }
 
-    @PostMapping
-    public void createNewUser(@RequestBody User User){
-        UserService.addUser(User);
-    }
-
     @DeleteMapping(path = "{UserID}")
     public void deleteUser(@PathVariable Long UserID){
         UserService.deleteUser(UserID);
     }
 
     @PutMapping(path = "{UserID}")
-    public void updateUser(
+    public ResponseEntity<User> updateUser(
             @PathVariable Long UserID,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String password){
-        UserService.updateUser(UserID,name,password);
+            @RequestBody User user){
+        return ResponseEntity.ok().body(UserService.updateUser(UserID,user.getUsername(),user.getPassword()));
     }
 }

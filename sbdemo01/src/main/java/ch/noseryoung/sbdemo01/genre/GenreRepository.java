@@ -10,7 +10,12 @@ import javax.transaction.Transactional;
 
 @Repository
 public interface GenreRepository extends JpaRepository<Genre, Long> {
-    @Modifying @Transactional
-    @Query("update Genre g set g.name = ?1, g.description = ?2, g.popularity = ?3 where g.id = ?4")
-    void updateGenre(String name, String description, Double popularity, Long id);
+    @Modifying@Transactional
+    @Query("update Genre g set g.name = :name, g.description = :description, g.popularity = :popularity where g.id = :id")
+    void updateGenre(
+            String name,
+            String description,
+            Double popularity,
+            Long id
+    );
 }

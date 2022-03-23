@@ -20,7 +20,6 @@ public class ConfirmationTokenService {
         return tokenRepository.findByToken(token);
     }
 
-
     public void setConfirmedAt(String token) {
         tokenRepository.updateConfirmedAt(LocalDateTime.now(), token);
     }

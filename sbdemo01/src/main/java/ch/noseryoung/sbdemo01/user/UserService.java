@@ -5,6 +5,7 @@ import ch.noseryoung.sbdemo01.register.token.ConfirmationTokenRepository;
 import ch.noseryoung.sbdemo01.register.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,16 +26,21 @@ public class UserService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
 
-    public List<User> getUsers() {
-        return UserRepository.findAll();
+    public ResponseEntity<List<User>> getUsers() {
+        return ResponseEntity.ok().body(UserRepository.findAll());
     }
 
     public Optional<User> getUser(Long UserId) {
         return UserRepository.findById(UserId);
     }
 
-    public void addUser(User User) {
-        UserRepository.save(User);
+    public User addUser(User User) {
+        boolean exists = UserRepository.findByEmail(User.getEmail()).isPresent();
+        if (!exists){
+            return UserRepository.save(User);
+        }else {
+            throw new IllegalStateException("this email already exists");
+        }
     }
 
     public void deleteUser(Long UserID) {
@@ -42,8 +48,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void updateUser(Long UserID, String name, String password) {
-        UserRepository.updateUser(name,password, UserID);
+    public User updateUser(Long UserID, String name, String password) {
+        if (!UserRepository.existsById(UserID)){
+            throw new IllegalStateException("this user does not exist");
+        }
+        return UserRepository.updateUser(name,password, UserID);
     }
 
     @Override
@@ -69,10 +78,7 @@ public class UserService implements UserDetailsService {
                 LocalDateTime.now().plusMinutes(10),
                 user
         );
-
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-
-        //TODO: send email
         return token;
     }
 
