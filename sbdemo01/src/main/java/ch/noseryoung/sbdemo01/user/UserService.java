@@ -4,6 +4,8 @@ import ch.noseryoung.sbdemo01.register.token.ConfirmationToken;
 import ch.noseryoung.sbdemo01.register.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,56 +24,50 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
-    private final UserRepository UserRepository;
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     public ResponseEntity<List<User>> getUsers() {
-        return ResponseEntity.ok().body(UserRepository.findAll());
+        logger.trace("showing all existing users");
+        return ResponseEntity.ok().body(userRepository.findAll());
     }
 
     public Optional<User> getUser(Long UserId) {
-        return UserRepository.findById(UserId);
-    }
-
-    public User addUser(User User) {
-        boolean exists = UserRepository.findByEmail(User.getEmail()).isPresent();
-        if (!exists){
-            return UserRepository.save(User);
-        }else {
-            throw new IllegalStateException("this email already exists");
-        }
+        logger.trace("showing the user with id "+ UserId);
+        return userRepository.findById(UserId);
     }
 
     public void deleteUser(Long userID) {
-        UserRepository.deleteById(userID);
+        exists(userID);
+        logger.trace("deleted user");
+        userRepository.deleteById(userID);
     }
 
     @Transactional
-    public User updateUser(User user, Long userID) {
-        boolean exists = UserRepository.existsById(userID);
-        if (!exists){
-            throw new IllegalStateException("user does not exist");
-        }
+    public void updateUser(User user, Long userID) {
+        exists(userID);
         String encoded = bCryptPasswordEncoder.encode(user.getPassword());
-        return UserRepository.updateUser(user.getUsername(), user.getLastName(), user.getEmail(), encoded, userID);
+        userRepository.updateUser(user.getUsername(), user.getLastName(), user.getEmail(), encoded, userID);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return UserRepository.findByUsername(username).orElseThrow(() ->
+        return userRepository.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException("user with name "+username+" was not found"));
     }
 
     public String signUpUser(User user){
-        boolean userExists = UserRepository.findByUsername(user.getUsername()).isPresent();
+        boolean userExists = userRepository.findByUsername(user.getUsername()).isPresent();
         if (userExists){
             throw new IllegalStateException("username already taken");
         }
         String encoded = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(encoded);
         System.out.println();
-        UserRepository.save(user);
+        userRepository.save(user);
 
         String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken(
@@ -85,11 +81,19 @@ public class UserService implements UserDetailsService {
     }
 
     public void enableAppUser(String email) {
-        UserRepository.enableUser(email);
+        userRepository.enableUser(email);
+    }
+
+    public void exists(Long id){
+        if (!userRepository.existsById(id)){
+            throw new IllegalStateException("user does not exist");
+        }
     }
 
     @ExceptionHandler(IllegalStateException.class)
     ResponseEntity<String> exception(IllegalStateException illegal){
         return ResponseEntity.status(403).body(illegal.getMessage());
     }
+
+
 }

@@ -1,7 +1,6 @@
 package ch.noseryoung.sbdemo01.user;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +22,7 @@ public class User implements UserDetails {
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
     )
-    private Long UserId;
+    private Long userId;
     private String username;
     private String lastName;
     private String email;

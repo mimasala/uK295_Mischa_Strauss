@@ -1,5 +1,6 @@
 package ch.noseryoung.sbdemo01.user;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,25 +21,29 @@ public class UserController {
     }
 
     @GetMapping
+    @Operation(summary = "lists all users")
     public ResponseEntity<List<User>> findAll(){
         return userService.getUsers();
     }
 
     @GetMapping(path = "{userID}")
+    @Operation(summary = "gets user by id")
     public ResponseEntity<Optional<User>> findByIDController(@PathVariable Long userID){
         return ResponseEntity.ok()
                 .body(userService.getUser(userID));
     }
 
     @DeleteMapping(path = "{userID}")
+    @Operation(summary = "deletes user by id")
     public void deleteUser(@PathVariable Long userID){
         userService.deleteUser(userID);
     }
 
     @PutMapping(path = "{userID}")
-    public ResponseEntity<User> updateUser(
+    @Operation(summary = "updates user by id")
+    public void updateUser(
             @PathVariable Long userID,
             @RequestBody User user){
-        return ResponseEntity.ok().body(userService.updateUser(user, userID));
+        userService.updateUser(user, userID);
     }
 }

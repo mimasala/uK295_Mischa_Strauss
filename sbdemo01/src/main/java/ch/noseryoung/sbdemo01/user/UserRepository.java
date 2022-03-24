@@ -21,6 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void enableUser(String email);
 
     @Modifying@Transactional
-    @Query("update User g set g.username = :username, g.lastName = :lastname, g.email = :email, g.password = :encoded where g.UserId = :userID")
-    User updateUser(String username, String lastName, String email, String encoded, Long userID);
+    @Query("update User g set g.username = :username, g.lastName = :lastName, g.email = :email, g.password = :encoded where g.UserId = :userID")
+    void updateUser(String username, String lastName, String email, String encoded, Long userID);
 }
