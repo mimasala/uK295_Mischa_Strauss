@@ -1,6 +1,5 @@
 package ch.noseryoung.sbdemo01.user;
 
-import ch.noseryoung.sbdemo01.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,33 +12,33 @@ import java.util.Optional;
 @RequestMapping(path = "api/v1/user/")
 public class UserController {
 
-    private final UserService UserService;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserService UserService){
-        this.UserService = UserService;
+    public UserController(UserService userService){
+        this.userService = userService;
     }
 
     @GetMapping
     public ResponseEntity<List<User>> findAll(){
-        return UserService.getUsers();
+        return userService.getUsers();
     }
 
-    @GetMapping(path = "{UserID}")
-    public ResponseEntity<Optional<User>> findByIDController(@PathVariable Long UserID){
+    @GetMapping(path = "{userID}")
+    public ResponseEntity<Optional<User>> findByIDController(@PathVariable Long userID){
         return ResponseEntity.ok()
-                .body(UserService.getUser(UserID));
+                .body(userService.getUser(userID));
     }
 
-    @DeleteMapping(path = "{UserID}")
-    public void deleteUser(@PathVariable Long UserID){
-        UserService.deleteUser(UserID);
+    @DeleteMapping(path = "{userID}")
+    public void deleteUser(@PathVariable Long userID){
+        userService.deleteUser(userID);
     }
 
-    @PutMapping(path = "{UserID}")
+    @PutMapping(path = "{userID}")
     public ResponseEntity<User> updateUser(
-            @PathVariable Long UserID,
+            @PathVariable Long userID,
             @RequestBody User user){
-        return ResponseEntity.ok().body(UserService.updateUser(UserID,user.getUsername(),user.getPassword()));
+        return ResponseEntity.ok().body(userService.updateUser(user, userID));
     }
 }

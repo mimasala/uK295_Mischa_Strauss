@@ -41,12 +41,10 @@ public class GenreController {
     }
 
     @PutMapping(path = "{genreID}")
-    public void updateGenre(
+    public ResponseEntity<Genre> updateGenre(
             @PathVariable Long genreID,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) Double popularity){
-        genreService.updateGenre(name,description,popularity,genreID);
+            @RequestBody Genre genre){
+        return ResponseEntity.ok().body(genreService.updateGenre(genre));
     }
 
     @ExceptionHandler(IllegalStateException.class)

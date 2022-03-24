@@ -10,9 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    @Modifying @Transactional
-    @Query("update User g set g.username = ?1, g.password = ?2 where g.UserId = ?3")
-    User updateUser(String name,  String password, Long id);
+
 
     Optional<User> findByUsername(String username);
 
@@ -21,4 +19,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying@Transactional
     @Query("update User u set u.authorized = true where u.email = ?1")
     void enableUser(String email);
+
+    @Modifying@Transactional
+    @Query("update User g set g.username = :username, g.lastName = :lastname, g.email = :email, g.password = :encoded where g.UserId = :userID")
+    User updateUser(String username, String lastName, String email, String encoded, Long userID);
 }

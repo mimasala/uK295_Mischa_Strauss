@@ -1,24 +1,24 @@
 package ch.noseryoung.sbdemo01.user;
 
 import ch.noseryoung.sbdemo01.register.token.ConfirmationToken;
-import ch.noseryoung.sbdemo01.register.token.ConfirmationTokenRepository;
 import ch.noseryoung.sbdemo01.register.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Log4j2
 @Service
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
@@ -43,16 +43,18 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void deleteUser(Long UserID) {
-        UserRepository.deleteById(UserID);
+    public void deleteUser(Long userID) {
+        UserRepository.deleteById(userID);
     }
 
     @Transactional
-    public User updateUser(Long UserID, String name, String password) {
-        if (!UserRepository.existsById(UserID)){
-            throw new IllegalStateException("this user does not exist");
+    public User updateUser(User user, Long userID) {
+        boolean exists = UserRepository.existsById(userID);
+        if (!exists){
+            throw new IllegalStateException("user does not exist");
         }
-        return UserRepository.updateUser(name,password, UserID);
+        String encoded = bCryptPasswordEncoder.encode(user.getPassword());
+        return UserRepository.updateUser(user.getUsername(), user.getLastName(), user.getEmail(), encoded, userID);
     }
 
     @Override
@@ -84,5 +86,10 @@ public class UserService implements UserDetailsService {
 
     public void enableAppUser(String email) {
         UserRepository.enableUser(email);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    ResponseEntity<String> exception(IllegalStateException illegal){
+        return ResponseEntity.status(403).body(illegal.getMessage());
     }
 }

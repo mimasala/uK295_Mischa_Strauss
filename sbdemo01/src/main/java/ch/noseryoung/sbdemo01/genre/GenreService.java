@@ -1,6 +1,7 @@
 package ch.noseryoung.sbdemo01.genre;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,7 +34,7 @@ public class GenreService {
     }
 
     @Transactional
-    public void updateGenre( String name, String description, Double popularity,Long genreID) {
-        genreRepository.updateGenre(name,description, popularity, genreID);
+    public Genre updateGenre(Genre genre) {
+        return genreRepository.save(genre);
     }
 }

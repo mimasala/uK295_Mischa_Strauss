@@ -1,26 +1,30 @@
 package ch.noseryoung.sbdemo01.register;
 
 import ch.noseryoung.sbdemo01.Email.EmailSender;
-import ch.noseryoung.sbdemo01.Email.EmailService;
 import ch.noseryoung.sbdemo01.register.token.ConfirmationToken;
 import ch.noseryoung.sbdemo01.register.token.ConfirmationTokenService;
 import ch.noseryoung.sbdemo01.user.User;
 import ch.noseryoung.sbdemo01.user.UserRole;
 import ch.noseryoung.sbdemo01.user.UserService;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class RegisterService {
 
     private final UserService userService;
     private final EmailValidate emailValidate;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
+
 
     public String register(RegisterRequest registerRequest) {
         if (!emailValidate.test(registerRequest.getEmail())){
@@ -35,6 +39,7 @@ public class RegisterService {
                         UserRole.USER
                 )
         );
+        log.trace("user " + registerRequest.getUsername() + " was created");
         String link = "http://localhost:8080/api/v1/register/confirm?token="+token;
         emailSender.send(registerRequest.getEmail(), buildEmail(registerRequest.getEmail(), link));
         return token;
@@ -126,5 +131,10 @@ public class RegisterService {
                 "  </tbody></table><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
                 "\n" +
                 "</div></div>";
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    ResponseEntity<String> exception(IllegalStateException illegal){
+        return ResponseEntity.status(403).body(illegal.getMessage());
     }
 }

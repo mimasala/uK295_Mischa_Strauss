@@ -10,10 +10,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@NoArgsConstructor@AllArgsConstructor
+@Getter @Setter
 @Entity
 public class ConfirmationToken {
     @Id
