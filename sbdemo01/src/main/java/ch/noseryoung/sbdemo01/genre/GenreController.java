@@ -1,24 +1,23 @@
 package ch.noseryoung.sbdemo01.genre;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
 @RequestMapping(path = "api/v1/genre/")
+@AllArgsConstructor
 public class GenreController {
 
     private final GenreService genreService;
 
-    @Autowired
-    public GenreController(GenreService genreService){
-        this.genreService = genreService;
-    }
+    private final GenreMapper genreMapper;
+
+
 
     @GetMapping
     @Operation(summary = "lists all genres")
@@ -28,15 +27,15 @@ public class GenreController {
 
     @Operation(summary = "gets genre by id")
     @GetMapping(path = "{genreID}")
-    public ResponseEntity<Optional<Genre>> findByIDController(@PathVariable Long genreID){
+    public ResponseEntity<GenreDto> findByIDController(@PathVariable Long genreID){
         return ResponseEntity.ok()
-                .body(genreService.getGenre(genreID));
+                .body(genreMapper.genreToGenreDto(genreService.getGenre(genreID)));
     }
 
     @PostMapping
     @Operation(summary = "creates new genre")
-    public void createNewGenre(@RequestBody Genre genre){
-        genreService.addGenre(genre);
+    public void createNewGenre(@RequestBody GenreDto genre){
+        genreService.addGenre(genreMapper.genreDtoToGenre(genre));
     }
 
     @DeleteMapping(path = "{genreID}")
@@ -49,8 +48,8 @@ public class GenreController {
     @Operation(summary = "updates a genre value by id")
     public ResponseEntity<Genre> updateGenre(
             @PathVariable Long genreID,
-            @RequestBody Genre genre){
-        return ResponseEntity.ok().body(genreService.updateGenre(genre));
+            @RequestBody GenreDto genre){
+        return ResponseEntity.ok().body(genreService.updateGenre(genreMapper.genreDtoToGenre(genre), genreID));
     }
 
     @ExceptionHandler(IllegalStateException.class)

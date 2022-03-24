@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GenreService {
@@ -20,8 +19,8 @@ public class GenreService {
         return genreRepository.findAll();
     }
 
-    public Optional<Genre> getGenre(Long genreId) {
-        return genreRepository.findById(genreId);
+    public Genre getGenre(Long genreId) {
+        return genreRepository.findById(genreId).orElseThrow(() -> new IllegalStateException("genre does not exist"));
     }
 
     public void addGenre(Genre genre) {
@@ -33,7 +32,7 @@ public class GenreService {
     }
 
     @Transactional
-    public Genre updateGenre(Genre genre) {
-        return genreRepository.save(genre);
+    public Genre updateGenre(Genre genre, Long genreID) {
+        return genreRepository.updateGenre(genre.getName(), genre.getDescription(), genre.getPopularity(), genreID);
     }
 }

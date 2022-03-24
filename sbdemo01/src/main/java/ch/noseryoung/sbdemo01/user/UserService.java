@@ -3,7 +3,6 @@ package ch.noseryoung.sbdemo01.user;
 import ch.noseryoung.sbdemo01.register.token.ConfirmationToken;
 import ch.noseryoung.sbdemo01.register.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Log4j2
+
 @Service
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
@@ -76,6 +75,7 @@ public class UserService implements UserDetailsService {
                 LocalDateTime.now().plusMinutes(10),
                 user
         );
+
         confirmationTokenService.saveConfirmationToken(confirmationToken);
         return token;
     }

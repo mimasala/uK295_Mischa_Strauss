@@ -1,7 +1,7 @@
 package ch.noseryoung.sbdemo01.user;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,14 +11,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/user/")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService){
-        this.userService = userService;
-    }
+
 
     @GetMapping
     @Operation(summary = "lists all users")
