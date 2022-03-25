@@ -1,7 +1,9 @@
 package ch.noseryoung.sbdemo01.genre;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -27,12 +29,18 @@ public class GenreService {
         genreRepository.save(genre);
     }
 
+    @Transactional
     public void deleteGenre(Long genreID) {
-        genreRepository.deleteById(genreID);
+        genreRepository.delete(genreRepository.findById(genreID).orElseThrow(()->new IllegalStateException("genre with this ID does not exist")));
     }
 
     @Transactional
-    public Genre updateGenre(Genre genre, Long genreID) {
-        return genreRepository.updateGenre(genre.getName(), genre.getDescription(), genre.getPopularity(), genreID);
+    public void updateGenre(Genre genre, Long genreID) {
+        genreRepository.updateGenre(genre.getName(), genre.getDescription(), genre.getPopularity(), genreID);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    ResponseEntity<String> exception(IllegalStateException illegal){
+        return ResponseEntity.status(400).body(illegal.getMessage());
     }
 }

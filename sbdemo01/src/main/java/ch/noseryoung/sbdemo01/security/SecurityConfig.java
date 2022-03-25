@@ -1,6 +1,7 @@
 package ch.noseryoung.sbdemo01.security;
 
 import ch.noseryoung.sbdemo01.user.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,41 +10,45 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @EnableWebSecurity
 @Configuration
-public class securityConfig extends WebSecurityConfigurerAdapter {
+@AllArgsConstructor
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final UserDetailsService userDetailsService;
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
-    public securityConfig(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userService = userService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/v*/register/**")
-                .permitAll()
+                .antMatchers("/","/api/v*/register/**", "/login").permitAll()
                 .anyRequest()
                 .authenticated().and()
-                .httpBasic()
+                .httpBasic().and()
+                .formLogin().defaultSuccessUrl("https://localhost:8080/api/v1/user/")
+
         ;
+    }
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth){
-        auth.authenticationProvider(authenticationProvider());
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(){
+    public DaoAuthenticationProvider daoAuthenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(bCryptPasswordEncoder);
         provider.setUserDetailsService(userService);

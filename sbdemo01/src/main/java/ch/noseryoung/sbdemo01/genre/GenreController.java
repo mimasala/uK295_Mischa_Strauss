@@ -46,14 +46,14 @@ public class GenreController {
 
     @PutMapping(path = "{genreID}")
     @Operation(summary = "updates a genre value by id")
-    public ResponseEntity<Genre> updateGenre(
+    public void updateGenre(
             @PathVariable Long genreID,
             @RequestBody GenreDto genre){
-        return ResponseEntity.ok().body(genreService.updateGenre(genreMapper.genreDtoToGenre(genre), genreID));
+        genreService.updateGenre(genreMapper.genreDtoToGenre(genre), genreID);
     }
 
     @ExceptionHandler(IllegalStateException.class)
     ResponseEntity<String> exception(IllegalStateException illegal){
-        return ResponseEntity.status(404).body(illegal.getMessage());
+        return ResponseEntity.status(400).body(illegal.getMessage());
     }
 }

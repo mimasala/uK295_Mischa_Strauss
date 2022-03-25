@@ -3,6 +3,7 @@ package ch.noseryoung.sbdemo01.user;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,9 +17,8 @@ public class UserController {
 
     private final UserService userService;
 
-
-
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "lists all users")
     public ResponseEntity<List<User>> findAll(){
         return userService.getUsers();
@@ -26,6 +26,7 @@ public class UserController {
 
     @GetMapping(path = "{userID}")
     @Operation(summary = "gets user by id")
+    @PreAuthorize("hasAuthority('CRUD')||hasAuthority('READONLY')||hasAuthority('MANAGE')")
     public ResponseEntity<Optional<User>> findByIDController(@PathVariable Long userID){
         return ResponseEntity.ok()
                 .body(userService.getUser(userID));
@@ -33,6 +34,7 @@ public class UserController {
 
     @DeleteMapping(path = "{userID}")
     @Operation(summary = "deletes user by id")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(@PathVariable Long userID){
         userService.deleteUser(userID);
     }

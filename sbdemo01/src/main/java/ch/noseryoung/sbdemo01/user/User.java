@@ -1,5 +1,6 @@
 package ch.noseryoung.sbdemo01.user;
 
+import ch.noseryoung.sbdemo01.user.userRole.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,7 +28,8 @@ public class User implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "user_role_id")
     private UserRole userRole;
     private Boolean locked = false;
     private Boolean authorized = false;
@@ -40,12 +42,13 @@ public class User implements UserDetails {
         this.userRole = userRole;
     }
 
+
     public User() {
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.getName());
         return Collections.singletonList(authority);
     }
 

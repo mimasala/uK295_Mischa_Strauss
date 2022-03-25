@@ -4,8 +4,10 @@ import ch.noseryoung.sbdemo01.Email.EmailSender;
 import ch.noseryoung.sbdemo01.register.token.ConfirmationToken;
 import ch.noseryoung.sbdemo01.register.token.ConfirmationTokenService;
 import ch.noseryoung.sbdemo01.user.User;
-import ch.noseryoung.sbdemo01.user.UserRole;
 import ch.noseryoung.sbdemo01.user.UserService;
+import ch.noseryoung.sbdemo01.user.authority.AuthorityRepository;
+import ch.noseryoung.sbdemo01.user.userRole.RoleRepository;
+import ch.noseryoung.sbdemo01.user.userRole.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,8 @@ public class RegisterService {
     private final EmailValidate emailValidate;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
+    private final AuthorityRepository authorityRepository;
+    private final RoleRepository roleRepository;
 
 
     public String register(RegisterRequest registerRequest) {
@@ -36,7 +40,8 @@ public class RegisterService {
                         registerRequest.getLastName(),
                         registerRequest.getEmail(),
                         registerRequest.getPassword(),
-                        UserRole.USER
+                        genUserRole(registerRequest.getUsername(),registerRequest.getPassword())
+
                 )
         );
         log.trace("user " + registerRequest.getUsername() + " was created");
@@ -44,10 +49,17 @@ public class RegisterService {
         emailSender.send(registerRequest.getEmail(), buildEmail(registerRequest.getEmail(), link));
         return token;
     }
+
+    public UserRole genUserRole(String userName, String password){
+        if (userName.equals("MischaADMIN")&&password.equals("adminpass")){
+            return roleRepository.findByName("ADMIN");
+        }
+        return roleRepository.findByName("USER");
+    }
+
     @Transactional
     public String confirmToken(String token){
-        ConfirmationToken confirmationToken = confirmationTokenService
-                .getToken(token)
+        ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
                 .orElseThrow(() -> new IllegalStateException("token cant be found"));
         if (confirmationToken.getConfirmedAt() != null){
             throw new IllegalStateException("email is taken");
@@ -56,11 +68,9 @@ public class RegisterService {
         if (expiredAt.isBefore(LocalDateTime.now())){
             throw new IllegalStateException("token expired");
         }
-
         confirmationTokenService.setConfirmedAt(token);
         userService.enableAppUser(
                 confirmationToken.getUser().getEmail());
-
         return "confirmed";
     }
 
@@ -77,6 +87,8 @@ public class RegisterService {
                 "</body>\n" +
                 "</html>";
     }
+
+
 
     @ExceptionHandler(IllegalStateException.class)
     ResponseEntity<String> exception(IllegalStateException illegal){

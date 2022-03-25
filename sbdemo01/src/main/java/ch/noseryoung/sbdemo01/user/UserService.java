@@ -42,7 +42,8 @@ public class UserService implements UserDetailsService {
     public void deleteUser(Long userID) {
         exists(userID);
         logger.trace("deleted user");
-        userRepository.deleteById(userID);
+        userRepository.deleteUserConstraint(userID);
+        userRepository.delete(userRepository.findById(userID).orElseThrow(()->new IllegalStateException("user does not exist")));
     }
 
     @Transactional
@@ -56,6 +57,12 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException("user with name "+username+" was not found"));
+//        User user = userRepository.findByUsername(username).orElseThrow(() -> new
+//                UsernameNotFoundException("user with name "+username+" was not found"));
+//        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+//        user.getUserRole().getAuthorities().forEach(authority ->
+//                authorities.add(new SimpleGrantedAuthority(authority.getName())));
+//        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
 
     public String signUpUser(User user){
@@ -92,8 +99,6 @@ public class UserService implements UserDetailsService {
 
     @ExceptionHandler(IllegalStateException.class)
     ResponseEntity<String> exception(IllegalStateException illegal){
-        return ResponseEntity.status(403).body(illegal.getMessage());
+        return ResponseEntity.status(400).body(illegal.getMessage());
     }
-
-
 }
