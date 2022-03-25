@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,12 +15,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = "api/v1/user/")
 @RequiredArgsConstructor
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('MANAGE')")
     @Operation(summary = "lists all users")
     public ResponseEntity<List<User>> findAll(){
         return userService.getUsers();
@@ -26,7 +30,7 @@ public class UserController {
 
     @GetMapping(path = "{userID}")
     @Operation(summary = "gets user by id")
-    @PreAuthorize("hasAuthority('CRUD')||hasAuthority('READONLY')||hasAuthority('MANAGE')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Optional<User>> findByIDController(@PathVariable Long userID){
         return ResponseEntity.ok()
                 .body(userService.getUser(userID));
@@ -46,4 +50,5 @@ public class UserController {
             @RequestBody User user){
         userService.updateUser(user, userID);
     }
+
 }

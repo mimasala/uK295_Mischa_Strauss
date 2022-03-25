@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,9 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -55,14 +54,14 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("user with name "+username+" was not found"));
-//        User user = userRepository.findByUsername(username).orElseThrow(() -> new
-//                UsernameNotFoundException("user with name "+username+" was not found"));
-//        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-//        user.getUserRole().getAuthorities().forEach(authority ->
-//                authorities.add(new SimpleGrantedAuthority(authority.getName())));
-//        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+//        return userRepository.findByUsername(username).orElseThrow(() ->
+//                new UsernameNotFoundException("user with name "+username+" was not found"));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new
+                UsernameNotFoundException("user with name "+username+" was not found"));
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        user.getUserRole().getAuthorities().forEach(authority ->
+                authorities.add(new SimpleGrantedAuthority(authority.getName())));
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
 
     public String signUpUser(User user){

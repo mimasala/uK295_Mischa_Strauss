@@ -2,7 +2,6 @@ package ch.noseryoung.sbdemo01.security;
 
 import ch.noseryoung.sbdemo01.user.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -32,15 +31,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated().and()
                 .httpBasic().and()
-                .formLogin().defaultSuccessUrl("https://localhost:8080/api/v1/user/")
+                .formLogin().defaultSuccessUrl("http://localhost:8080/api/v1/user/")
 
         ;
     }
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
-    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth){
