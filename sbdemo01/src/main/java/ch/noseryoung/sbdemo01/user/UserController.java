@@ -36,6 +36,14 @@ public class UserController {
                 .body(userService.getUser(userID));
     }
 
+    @PostMapping
+    public ResponseEntity<Object> addRoleToUser(
+            @RequestParam String userName,
+            @RequestParam String roleName){
+        userService.addAuthToUser(userName, roleName);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping(path = "{userID}")
     @Operation(summary = "deletes user by id")
     @PreAuthorize("hasRole('ADMIN')")
@@ -50,5 +58,4 @@ public class UserController {
             @RequestBody User user){
         userService.updateUser(user, userID);
     }
-
 }

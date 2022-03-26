@@ -2,7 +2,10 @@ package ch.noseryoung.sbdemo01.user;
 
 import ch.noseryoung.sbdemo01.register.token.ConfirmationToken;
 import ch.noseryoung.sbdemo01.register.token.ConfirmationTokenService;
+import ch.noseryoung.sbdemo01.user.authority.Authority;
+import ch.noseryoung.sbdemo01.user.authority.AuthorityRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +24,12 @@ import java.util.*;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
+    private final AuthorityRepository authorityRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -34,7 +39,7 @@ public class UserService implements UserDetailsService {
     }
 
     public Optional<User> getUser(Long UserId) {
-        logger.trace("showing the user with id "+ UserId);
+        logger.trace("showing the user with {} ", UserId);
         return userRepository.findById(UserId);
     }
 
@@ -54,8 +59,6 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        return userRepository.findByUsername(username).orElseThrow(() ->
-//                new UsernameNotFoundException("user with name "+username+" was not found"));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new
                 UsernameNotFoundException("user with name "+username+" was not found"));
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -96,8 +99,24 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public void addAuthToUser(String userName, String authName){
+        User user = userRepository.findByUsername(userName).orElseThrow(() ->
+                new UsernameNotFoundException("username not found "));
+        Authority authority =  authorityRepository.findByName(authName).orElseThrow(() ->
+                new UsernameNotFoundException("authority name not found"));
+        user.getUserRole().getAuthorities().add(authority);
+    }
+
     @ExceptionHandler(IllegalStateException.class)
     ResponseEntity<String> exception(IllegalStateException illegal){
+        log.error(illegal.getMessage());
         return ResponseEntity.status(400).body(illegal.getMessage());
     }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    ResponseEntity<String> exception(UsernameNotFoundException notfound){
+        log.error(notfound.getMessage());
+        return ResponseEntity.status(404).body(notfound.getMessage());
+    }
+
 }

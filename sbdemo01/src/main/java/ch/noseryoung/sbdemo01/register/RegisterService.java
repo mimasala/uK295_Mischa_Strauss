@@ -52,9 +52,9 @@ public class RegisterService {
 
     public UserRole genUserRole(String userName, String password){
         if (userName.equals("MischaADMIN")&&password.equals("adminpass")){
-            return roleRepository.findByName("ADMIN");
+            return roleRepository.findByName("ADMIN").get();
         }
-        return roleRepository.findByName("USER");
+        return roleRepository.findByName("USER").get();
     }
 
     @Transactional
