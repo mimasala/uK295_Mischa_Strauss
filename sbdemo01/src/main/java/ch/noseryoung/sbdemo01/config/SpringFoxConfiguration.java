@@ -19,5 +19,4 @@ public class SpringFoxConfiguration {
                 .paths(PathSelectors.any())
                 .build();
     }
-
 }
