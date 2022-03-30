@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter@Setter
@@ -19,8 +20,11 @@ public class Genre {
             strategy = GenerationType.IDENTITY
     )
     private Long id;
+    @NotNull
     private String name;
+    @NotNull
     private Double popularity;
+    @NotNull
     private String description;
 
     public Genre(String name, Double popularity, String description) {

@@ -39,8 +39,4 @@ public class GenreService {
         genreRepository.updateGenre(genre.getName(), genre.getDescription(), genre.getPopularity(), genreID);
     }
 
-    @ExceptionHandler(IllegalStateException.class)
-    ResponseEntity<String> exception(IllegalStateException illegal){
-        return ResponseEntity.status(400).body(illegal.getMessage());
-    }
 }

@@ -6,11 +6,15 @@ import ch.noseryoung.sbdemo01.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 @EnableAsync
 @Component@AllArgsConstructor
+@EnableScheduling
 public class DeleteUsers {
 
 
@@ -18,15 +22,13 @@ public class DeleteUsers {
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
     @Async
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 60000 )
     public void deleteUsers() {
-
-        for (int i = 0; i < confirmationTokenRepository.getUnconfirmedTokens().size(); i++) {
-            ConfirmationToken tempToken = confirmationTokenRepository.getUnconfirmedTokens().get(i);
-            if (tempToken.getExpiresAt().isBefore(java.time.LocalDateTime.now())&&tempToken.getConfirmedAt()==null) {
-                confirmationTokenRepository.delete(confirmationTokenRepository.findById(tempToken.getTokenId()).orElseThrow());
-                userRepository.delete(tempToken.getUser());
+        confirmationTokenRepository.getUnconfirmedTokens().forEach(confirmationToken -> {
+            if (confirmationToken.getExpiresAt().isBefore(java.time.LocalDateTime.now())&&confirmationToken.getConfirmedAt()==null) {
+                confirmationTokenRepository.deleteById(confirmationToken.getTokenId());
+                userRepository.deleteById(confirmationToken.getUser().getUserId());
             }
-        }
+        });
     }
 }
