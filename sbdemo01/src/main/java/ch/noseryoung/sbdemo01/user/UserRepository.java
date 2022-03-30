@@ -28,3 +28,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("delete from ConfirmationToken c where c.tokenId = :userID")
     void deleteUserConstraint(Long userID);
 }
+

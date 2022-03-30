@@ -105,6 +105,7 @@ public class UserService implements UserDetailsService {
         Authority authority =  authorityRepository.findByName(authName).orElseThrow(() ->
                 new UsernameNotFoundException("authority name not found"));
         user.getUserRole().getAuthorities().add(authority);
+        userRepository.save(user);
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -118,5 +119,4 @@ public class UserService implements UserDetailsService {
         log.error(notfound.getMessage());
         return ResponseEntity.status(404).body(notfound.getMessage());
     }
-
 }
