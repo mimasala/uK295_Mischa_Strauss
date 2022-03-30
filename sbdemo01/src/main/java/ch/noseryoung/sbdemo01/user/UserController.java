@@ -13,7 +13,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping(path = "api/v1/user/")
+@RequestMapping(path = "api/v1/users")
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -22,31 +22,33 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('MANAGE')")
     @Operation(summary = "lists all users")
+    @PreAuthorize("hasAuthority('MANAGE')")
     public ResponseEntity<List<User>> findAll(){
         return userService.getUsers();
     }
 
     @GetMapping(path = "{userID}")
     @Operation(summary = "gets user by id")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('MANAGE','CRUD')")
     public ResponseEntity<Optional<User>> findByIDController(@PathVariable Long userID){
         return ResponseEntity.ok()
                 .body(userService.getUser(userID));
     }
 
-    @PostMapping
-    public ResponseEntity<Object> addRoleToUser(
+    @PutMapping
+    @Operation(summary = "adds Authority of user by name")
+    @PreAuthorize("hasAuthority('MANAGE')")
+    public ResponseEntity<Object> addAuthToUser(
             @RequestParam String userName,
-            @RequestParam String roleName){
-        userService.addAuthToUser(userName, roleName);
+            @RequestParam String auth){
+        userService.addAuthToUser(userName, auth);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(path = "{userID}")
     @Operation(summary = "deletes user by id")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('MANAGE')")
     public void deleteUser(@PathVariable Long userID){
         userService.deleteUser(userID);
     }

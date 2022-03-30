@@ -26,7 +26,6 @@ public class RegisterService {
     private final EmailValidate emailValidate;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
-    private final AuthorityRepository authorityRepository;
     private final RoleRepository roleRepository;
 
 
@@ -52,9 +51,9 @@ public class RegisterService {
 
     public UserRole genUserRole(String userName, String password){
         if (userName.equals("MischaADMIN")&&password.equals("adminpass")){
-            return roleRepository.findByName("ADMIN").get();
+            return roleRepository.findByName("ADMIN").orElseThrow(() -> new IllegalStateException("role cant be found"));
         }
-        return roleRepository.findByName("USER").get();
+        return roleRepository.findByName("USER").orElseThrow(() -> new IllegalStateException("role cant be found"));
     }
 
     @Transactional
