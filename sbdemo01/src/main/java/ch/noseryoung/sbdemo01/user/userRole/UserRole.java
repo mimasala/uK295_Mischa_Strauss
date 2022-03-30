@@ -2,7 +2,6 @@ package ch.noseryoung.sbdemo01.user.userRole;
 
 import ch.noseryoung.sbdemo01.user.authority.Authority;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;

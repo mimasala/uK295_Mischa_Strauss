@@ -88,9 +88,4 @@ public class RegisterService {
     }
 
 
-
-    @ExceptionHandler(IllegalStateException.class)
-    ResponseEntity<String> exception(IllegalStateException illegal){
-        return ResponseEntity.status(403).body(illegal.getMessage());
-    }
 }
