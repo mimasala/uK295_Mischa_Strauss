@@ -107,16 +107,4 @@ public class UserService implements UserDetailsService {
         user.getUserRole().getAuthorities().add(authority);
         userRepository.save(user);
     }
-
-    @ExceptionHandler(IllegalStateException.class)
-    ResponseEntity<String> exception(IllegalStateException illegal){
-        log.error(illegal.getMessage());
-        return ResponseEntity.status(400).body(illegal.getMessage());
-    }
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    ResponseEntity<String> exception(UsernameNotFoundException notfound){
-        log.error(notfound.getMessage());
-        return ResponseEntity.status(404).body(notfound.getMessage());
-    }
 }

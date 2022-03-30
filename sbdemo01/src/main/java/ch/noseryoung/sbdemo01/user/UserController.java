@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class UserController {
 
     @PutMapping
     @Operation(summary = "adds Authority of user by name")
-    @PreAuthorize("hasAuthority('MANAGE')")
+
     public ResponseEntity<Object> addAuthToUser(
             @RequestParam String userName,
             @RequestParam String auth){
@@ -59,5 +60,14 @@ public class UserController {
             @PathVariable Long userID,
             @RequestBody User user){
         userService.updateUser(user, userID);
+    }
+    @ExceptionHandler(IllegalStateException.class)
+    ResponseEntity<String> exception(IllegalStateException illegal){
+        return ResponseEntity.status(403).body(illegal.getMessage());
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    ResponseEntity<String> exception(UsernameNotFoundException notfound){
+        return ResponseEntity.status(403).body(notfound.getMessage());
     }
 }

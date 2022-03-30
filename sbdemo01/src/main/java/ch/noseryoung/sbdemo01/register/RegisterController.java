@@ -2,6 +2,7 @@ package ch.noseryoung.sbdemo01.register;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,5 +22,10 @@ public class RegisterController {
     @Operation(summary = "enables the authority of user by the provided token")
     public String confirm(@RequestParam("token")String token){
         return registerService.confirmToken(token);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    ResponseEntity<String> exception(IllegalStateException illegal){
+        return ResponseEntity.status(403).body(illegal.getMessage());
     }
 }

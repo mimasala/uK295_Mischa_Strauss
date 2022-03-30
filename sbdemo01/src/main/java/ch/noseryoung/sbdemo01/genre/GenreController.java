@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -34,7 +35,7 @@ public class GenreController {
 
     @PostMapping
     @Operation(summary = "creates new genre")
-    public void createNewGenre(@RequestBody GenreDto genre){
+    public void createNewGenre(@Valid @RequestBody GenreDto genre){
         genreService.addGenre(genreMapper.genreDtoToGenre(genre));
     }
 
@@ -48,7 +49,7 @@ public class GenreController {
     @Operation(summary = "updates a genre value by id")
     public void updateGenre(
             @PathVariable Long genreID,
-            @RequestBody GenreDto genre){
+            @Valid @RequestBody GenreDto genre){
         genreService.updateGenre(genreMapper.genreDtoToGenre(genre), genreID);
     }
 
